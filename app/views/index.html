@@ -1,10 +1,133 @@
 <html lang="en">
-    <head>
-        <link rel="stylesheet" href="index.css">
-        <title>Homepage</title>
-    </head>
 
-    <body>
-        <p>Hello World</p>
-    </body>
+<head>
+    <link rel="stylesheet" href="static/index.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <title>Homepage</title>
+</head>
+
+<body>
+
+
+    <header class="header border-bottom-1px">
+        <a href="#" class="logo">Logo</a>
+
+        <nav class="navbar">
+            <a href="#">Home</a>
+            <a href="#">Content</a>
+            <a href="#">About Us</a>
+            <a href="#">Contact Us</a>
+        </nav>
+    </header>
+
+    <div class="selection-container">
+
+        <div class="datepicker-container center">
+            <div id="datepicker" class="column">
+                <div id="daterange"></div>
+                <div id="date-display">
+                    <p id="date-display-text" class="border-small"></p>
+                    <button id="date-display-clear" class="border-small">X</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="options-container">
+                <div class="grid-container">
+                    <div class="status center">
+                        <div class="">Status</div>
+                        <div class="status-checkbox">
+                            <label><input type="checkbox">Scheduled</label>
+                            <label><input type="checkbox">Ongoing</label>
+                            <label><input type="checkbox">Played</label>
+                        </div>
+                    </div>
+
+                    <div class="status-venue center">
+                        <label><input placeholder="Venue Name">Venue Name</label>
+                    </div>
+                    <div class="status-team center">
+                        <label><input placeholder="Team Name">Team Name</label>
+                    </div>
+
+                    <div class="status-competition center">
+                        <label><select><option value="">-</option></select>Competition</label>
+                    </div>
+      
+                </div>
+
+            
+
+            </div>
+
+            <div class="find-container center">
+                <button class="find-button border-small">Find Games</button>
+            </div>
+            
+
+            
+        </div>
+
+    </div>
+
+    <footer class="footer border-top-1px"></footer>
+
+    <input type="file" name="file" id="file" accept=".json">
+</body>
+
+<script>
+
+    sessionStorage.setItem('startDate', null)
+    sessionStorage.setItem('endDate', null)
+
+    function dateFormatter(date) {
+        let formattedDate = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${(date.getDate()).toString().padStart(2, '0')}`
+        return formattedDate
+    }
+
+
+    document.addEventListener('DOMContentLoaded', function () {
+
+        const display_date = document.getElementById("date-display-text")
+        const button_clear_date = document.getElementById("date-display-clear")
+
+        flatpickr("#daterange", {
+            mode: "range",
+            inline: true,
+
+            onChange: function (selectedDates) {
+                let startDate = dateFormatter(selectedDates[0])
+
+                let endDate = undefined
+                if (selectedDates[1]) {
+                    endDate = dateFormatter(selectedDates[1])
+
+                }
+
+                display_date.textContent = endDate ? `${startDate} to ${endDate}` : `${startDate}`;
+
+            },
+
+            onClose: function (selectedDates) {
+                let startDate = dateFormatter(selectedDates[0])
+                let endDate = dateFormatter(selectedDates[1])
+
+                sessionStorage.setItem('startDate', startDate)
+                sessionStorage.setItem('endDate', endDate)
+ 
+            }
+        });
+
+        button_clear_date.addEventListener('click', function () {
+            display_date.textContent = "";
+        })
+
+    });
+
+
+</script>
+
+
 </html>
