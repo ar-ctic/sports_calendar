@@ -4,7 +4,7 @@ import json
 import yaml
 
 
-from models.database import initDatabase, addAllBasedOnOneEvent, printAllMatches, getCompetitionNames
+from models.database import initDatabase, addAllBasedOnOneEvent, getCompetitionNames, getMatchesWithParameter
 
 database_path: str = ""
 
@@ -38,6 +38,15 @@ def index():
     Renders index.html for base url
     """
     return render_template("index.html")
+
+
+@app.route("/getMatches", methods=["POST"])
+def matches():
+    
+    data = request.get_json()
+    
+    connection = getDatabaseConnection()
+    return jsonify(getMatchesWithParameter(connection, data))
 
 
 @app.route("/upload", methods=["POST"])
@@ -94,8 +103,6 @@ def upload():
             info = addAllBasedOnOneEvent(connection, gameData)
             log.append(info)
         
-        printAllMatches(connection)
-
         return jsonify(log), 200
     except json.JSONDecodeError:
         return jsonify({"message": "Invalid JSON format"}), 400
@@ -115,7 +122,7 @@ def getCompetitions():
     competitions = []
     for name in competitionNames:
         competitions.append(name)
-    print(competitions)
+
     return competitions
 
 

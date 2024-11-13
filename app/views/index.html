@@ -29,7 +29,7 @@
             <div id="datepicker" class="column">
                 <div id="daterange"></div>
                 <div id="date-display">
-                    <p id="date-display-text" class="border-small"></p>
+                    <p id="date-display-text" class="border-small center"></p>
                     <button id="date-display-clear" class="border-small">X</button>
                 </div>
             </div>
@@ -41,17 +41,17 @@
                     <div class="status center">
                         <div class="">Status</div>
                         <div class="status-checkbox">
-                            <label><input type="checkbox">Scheduled</label>
-                            <label><input type="checkbox">Ongoing</label>
-                            <label><input type="checkbox">Played</label>
+                            <label><input id="scheduled-checkbox" type="checkbox" value="scheduled">Scheduled</label>
+                            <label><input id="ongoing-checkbox" type="checkbox" value="ongoing">Ongoing</label>
+                            <label><input id="played-checkbox" type="checkbox" value="played">Played</label>
                         </div>
                     </div>
 
                     <div class="status-venue center">
-                        <label><input placeholder="Venue Name">Venue Name</label>
+                        <label><input id="venue-name" placeholder="Venue Name">Venue Name</label>
                     </div>
                     <div class="status-team center">
-                        <label><input placeholder="Team Name">Team Name</label>
+                        <label><input id="team-name" placeholder="Team Name">Team Name</label>
                     </div>
 
                     <div class="status-competition center">
@@ -67,7 +67,7 @@
             </div>
 
             <div class="find-container center">
-                <button class="find-button border-small">Find Games</button>
+                <button class="find-button border-small" onclick="getMatches()">Find Games</button>
             </div>
 
 
@@ -78,18 +78,12 @@
 
     <footer class="footer border-top-1px"></footer>
 
-    <input type="file" name="file" id="file" accept=".json">
+    <input type="file" name="file" id="file-input" accept=".json">
 </body>
 
 <script>
 
-    //
-
-    sessionStorage.setItem('startDate', null)
-    sessionStorage.setItem('endDate', null)
-
-
-    const fileInput = document.getElementById("file")
+    const fileInput = document.getElementById("file-input")
     fileInput.addEventListener("change", async function () {
         const file = fileInput.files[0]
 
@@ -101,7 +95,7 @@
             body: formData
         };
 
-        if(file && file.type === "application/json"){
+        if (file && file.type === "application/json") {
             x = await makeRequest('/upload', options)
             console.log(x)
         }
@@ -112,20 +106,23 @@
         return formattedDate
     }
 
-
+    let startDate = "";
+    let endDate = "";
     document.addEventListener('DOMContentLoaded', function () {
 
         const display_date = document.getElementById("date-display-text")
         const button_clear_date = document.getElementById("date-display-clear")
+
+
 
         flatpickr("#daterange", {
             mode: "range",
             inline: true,
 
             onChange: function (selectedDates) {
-                let startDate = dateFormatter(selectedDates[0])
+                startDate = dateFormatter(selectedDates[0])
 
-                let endDate = undefined
+                endDate = undefined
                 if (selectedDates[1]) {
                     endDate = dateFormatter(selectedDates[1])
 
@@ -136,12 +133,9 @@
             },
 
             onClose: function (selectedDates) {
-                let startDate = dateFormatter(selectedDates[0])
-                let endDate = dateFormatter(selectedDates[1])
+                startDate = dateFormatter(selectedDates[0])
+                endDate = dateFormatter(selectedDates[1])
 
-                sessionStorage.setItem('startDate', startDate)
-                sessionStorage.setItem('endDate', endDate)
-                getMatches()
             }
         });
 
@@ -167,13 +161,70 @@
 
         for (const item of data) {
             const option = document.createElement('option')
-            
+
             option.value = item
             option.textContent = item
 
             competitionSelect.appendChild(option)
 
         }
+    }
+
+
+    function getCheckboxStatus() {
+
+        const scheduledCheckbox = document.getElementById("scheduled-checkbox")
+        const ongoingCheckbox = document.getElementById("ongoing-checkbox")
+        const playedCheckbox = document.getElementById("played-checkbox")
+
+        const selectedValues = []
+
+        if (scheduledCheckbox.checked) {
+            selectedValues.push(scheduledCheckbox.value);
+        }
+        if (ongoingCheckbox.checked) {
+            selectedValues.push(ongoingCheckbox.value);
+        }
+        if (playedCheckbox.checked) {
+            selectedValues.push(playedCheckbox.value);
+        }
+
+        return selectedValues
+
+    }
+
+    function getVenueName() {
+        const venueNameInput = document.getElementById("venue-name")
+        const venueName = venueNameInput.value
+        const trimmedVenueName = venueName.trim()
+
+        if(trimmedVenueName === ""){
+            return null
+        }
+        return trimmedVenueName
+    }
+
+    function getTeamName() {
+        const teamNameInput = document.getElementById("team-name")
+        const teamName = teamNameInput.value
+        const trimmedTeamName = teamName.trim()
+
+        if(trimmedTeamName === ""){
+            return null
+        }
+
+        return trimmedTeamName
+    }
+
+    function getCompetitionName() {
+        const competitionNameSelect = document.getElementById("select-competition")
+        const competitionName = competitionNameSelect.value
+        const trimmedCompetitionName = competitionName.trim()
+
+        if(trimmedCompetitionName === ""){
+            return null
+        }
+        return trimmedCompetitionName
     }
 
 </script>
@@ -206,9 +257,34 @@
 
         } catch (error) {
             console.error(`ERROR ${error}`)
-            return { success: false, message: error.message}
+            return { success: false, message: error.message }
         }
     }
+
+
+    async function getMatches() {
+
+        const config = {
+            "startDate": startDate,
+            "endDate": endDate,
+            "status": getCheckboxStatus(),
+            "venueName": getVenueName(),
+            "teamName": getTeamName(),
+            "competition": getCompetitionName()
+        }
+
+        const options = {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json" // Specify content type
+            },
+            body: JSON.stringify(config)
+        }
+
+        let data = await makeRequest('/getMatches', options)
+        console.log(data)
+    }
+
 
     /**
      * Sends HTTP GET request to '/competitions' API
