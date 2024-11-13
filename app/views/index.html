@@ -7,6 +7,8 @@
     <title>Homepage</title>
 </head>
 
+
+
 <body>
 
 
@@ -53,21 +55,23 @@
                     </div>
 
                     <div class="status-competition center">
-                        <label><select><option value="">-</option></select>Competition</label>
+                        <label><select id="select-competition">
+                                <option value="">-</option>
+                            </select>Competition</label>
                     </div>
-      
+
                 </div>
 
-            
+
 
             </div>
 
             <div class="find-container center">
                 <button class="find-button border-small">Find Games</button>
             </div>
-            
 
-            
+
+
         </div>
 
     </div>
@@ -79,8 +83,29 @@
 
 <script>
 
+    //
+
     sessionStorage.setItem('startDate', null)
     sessionStorage.setItem('endDate', null)
+
+
+    const fileInput = document.getElementById("file")
+    fileInput.addEventListener("change", async function () {
+        const file = fileInput.files[0]
+
+        const formData = new FormData();
+        formData.append("file", file);
+
+        const options = {
+            method: 'POST',
+            body: formData
+        };
+
+        if(file && file.type === "application/json"){
+            x = await makeRequest('/upload', options)
+            console.log(x)
+        }
+    })
 
     function dateFormatter(date) {
         let formattedDate = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${(date.getDate()).toString().padStart(2, '0')}`
@@ -116,7 +141,7 @@
 
                 sessionStorage.setItem('startDate', startDate)
                 sessionStorage.setItem('endDate', endDate)
- 
+                getMatches()
             }
         });
 
@@ -129,5 +154,80 @@
 
 </script>
 
+
+<script>
+    /**
+     * Sets option in select input for each competition in data
+     * 
+     * @param {Object} data - Object that contains all available competitions
+     * 
+     */
+    function setCompetitionSelect(data) {
+        const competitionSelect = document.getElementById("select-competition")
+
+        for (const item of data) {
+            const option = document.createElement('option')
+            
+            option.value = item
+            option.textContent = item
+
+            competitionSelect.appendChild(option)
+
+        }
+    }
+
+</script>
+
+
+<script>
+
+    const BASE_URL = 'http://127.0.0.1:5000'
+
+    /**
+     * Sends an HTTP request to specified url with provided options
+     * 
+     * @param {string} endpoint - Endpoint to API
+     * @param {object} options - Settings for request, such as method, headers and body. Defaults to { method: 'GET' }
+     * 
+     * @returns {Promise<Object>} - Promise which resolves into JSON response if successful
+     * 
+     */
+    async function makeRequest(endpoint, options = { method: 'GET' }) {
+        const url = `${BASE_URL}${endpoint}`
+
+        try {
+            let response = await fetch(url, options)
+
+            if (!response.ok) {
+                throw new Error(`HTTP Error! Status: ${response.status}`)
+            }
+
+            return response.json()
+
+        } catch (error) {
+            console.error(`ERROR ${error}`)
+            return { success: false, message: error.message}
+        }
+    }
+
+    /**
+     * Sends HTTP GET request to '/competitions' API
+     * Sets options in select element for every competition 
+     * 
+     * @returns {Promise<object>} - Object with all available competitions, setting select input options
+     */
+    async function getCompetitions() {
+
+        const options = {
+            method: 'GET'
+        };
+
+        let data = await makeRequest('/getCompetitions', options)
+
+        setCompetitionSelect(data)
+
+    }
+    getCompetitions()
+</script>
 
 </html>
