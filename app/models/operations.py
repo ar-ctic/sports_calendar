@@ -3,7 +3,7 @@
 
 def addSport(cursor: object, data: dict):
     """
-    Inserts team into teams
+    Inserts sport into sports
 
     @param {Object} cursor - object to execute queries
     @param {Object} data - data with sports details
@@ -19,7 +19,7 @@ def addSport(cursor: object, data: dict):
 
 def addCompetition(cursor: object, data: dict):
     """
-    Inserts team into teams
+    Inserts competition into competitions
 
     @param {Object} cursor - object to execute queries
     @param {Object} data - data with competition details
@@ -41,7 +41,7 @@ def addCompetition(cursor: object, data: dict):
 
 def addStage(cursor: object, data: dict):
     """
-    Inserts team into teams
+    Inserts stage into stages
 
     @param {Object} cursor - object to execute queries
     @param {Object} data - data with stage details
@@ -90,7 +90,7 @@ def addTeam(cursor: object, data: dict, foreignIds: dict):
     )
 
     teamId = cursor.lastrowid
-    print(teamId)
+
     return teamId
 
 
