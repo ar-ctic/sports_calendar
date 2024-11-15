@@ -83,7 +83,7 @@
             <div class="game-section">
                 <p class="game-detail">Competition</p>
                 <p class="game-detail">Stage</p>
-                
+
             </div>
 
             <div class="game-section">
@@ -122,7 +122,9 @@
 
     const fileInput = document.getElementById("file-input")
     fileInput.addEventListener("change", async function () {
-
+        /**
+         * On fileinput get the file, call 'uploadFile' if file is JSON
+         */
         const file = fileInput.files[0]
 
         const formData = new FormData()
@@ -133,14 +135,15 @@
         }
     })
 
-    /**
-     * Formats the date to format: "YYYY-mm-dd"
-     * 
-     * @param {Object} date - object that contains data about selected date
-     * 
-     * @returns {string} - formatted date
-     */
+
     function dateFormatter(date) {
+        /**
+         * Formats the date to format: "YYYY-mm-dd"
+         * 
+         * @param {Object} date - object that contains data about selected date
+         * 
+         * @returns {string} - formatted date
+         */
         let formattedDate = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${(date.getDate()).toString().padStart(2, '0')}`
         return formattedDate
     }
@@ -195,9 +198,10 @@
 
 <script>
 
-
-
     function findMatches() {
+        /**
+         * Find new matches, reset offset and clear "games" div
+         */
         offset = 0
         const gamesContainer = document.getElementById('games')
         gamesContainer.innerHTML = ""
@@ -205,17 +209,21 @@
     }
 
     function loadMore() {
+        /**
+         * Load new matches, increment offset by limit
+         */
         offset += limit
         getMatches()
     }
 
-    /**
-     * Sets option in select input for each competition in data
-     * 
-     * @param {Object} data - Object that contains all available competitions
-     * 
-     */
+
     function setCompetitionSelect(data) {
+        /**
+         * Sets option in select input for each competition in data
+         * 
+         * @param {Object} data - Object that contains all available competitions
+         * 
+         */
         const competitionSelect = document.getElementById("select-competition")
 
         data.forEach(item => {
@@ -229,12 +237,29 @@
         })
     }
 
-    function setGames(data) {
 
+    function setGames(data) {
+        /**
+         * Adds divs with game details into "games" div, shows or hides "load-more"
+         */
         const gamesContainer = document.getElementById('games')
         const loadMoreContainer = document.getElementById('load-more')
 
+        // If length of date is smaller than query limit all data has loaded -> hide "load-more" else show
+        if (data.length < limit) {
+            loadMoreContainer.style.display = "none"
+        } else {
+            loadMoreContainer.style.display = "flex"
+        }
+
         function createDetailElement(textContent) {
+            /**
+             * creates Text Element with game detail
+             * 
+             * @param {string} textContent - game detail
+             * 
+             * @returns {Object} detailElement - <p> text element with textContent as textContent
+             */
             const detailElement = document.createElement('p')
             detailElement.className = "game-detail"
             detailElement.textContent = textContent === null ? "---" : textContent
@@ -242,6 +267,13 @@
         }
 
         function getGameDetailSections(game) {
+            /**
+             * Sorts game data in a list as it will be displayed and slices it into 5 sublists
+             * 
+             * @param {Object} game - List object with game details
+             * 
+             * @returns {Object} sections - List of Lists with game details for each div
+             */
             const date = new Date(game[3] * 1000).toLocaleString('en-GB', { timeZone: 'UTC' })
 
             // Reorder list: [Season, Date, Time, Competition, Stage, Status, Stadium, HomeTeam, AwayTeam, Goals-HomeTeam, Goals-AwayTeam]
@@ -279,22 +311,18 @@
         })
 
 
-        if (gamesContainer.innerHTML !== "") {
-            loadMoreContainer.style.display = "flex"
-        } else {
-            loadMoreContainer.style.display = "none"
-        }
+
 
     }
 
-    /**
-     * Gets value from status checkboxes
-     * 
-     * @returns {Object} - values of checkboxes
-     * 
-     */
-    function getCheckboxStatus() {
 
+    function getCheckboxStatus() {
+        /**
+         * Gets value from status checkboxes
+         * 
+         * @returns {Object} - values of checkboxes
+         * 
+         */
         const scheduledCheckbox = document.getElementById("scheduled-checkbox")
         const ongoingCheckbox = document.getElementById("ongoing-checkbox")
         const playedCheckbox = document.getElementById("played-checkbox")
@@ -315,13 +343,14 @@
 
     }
 
-    /**
-     * Gets venue-name value from input
-     * 
-     * returns {string | null} - value of input 
-     * 
-     */
+
     function getVenueName() {
+        /**
+         * Gets venue-name value from input
+         * 
+         * @returns {string | null} - value of input 
+         * 
+         */
         const venueNameInput = document.getElementById("venue-name")
         const venueName = venueNameInput.value
         const trimmedVenueName = venueName.trim()
@@ -329,13 +358,14 @@
         return trimmedVenueName
     }
 
-    /**
-     * Gets team-name value from input
-     * 
-     * returns {string | null} - value of input 
-     * 
-     */
+
     function getTeamName() {
+        /**
+         * Gets team-name value from input
+         * 
+         * @returns {string | null} - value of input 
+         * 
+         */
         const teamNameInput = document.getElementById("team-name")
         const teamName = teamNameInput.value
         const trimmedTeamName = teamName.trim()
@@ -343,13 +373,14 @@
         return trimmedTeamName
     }
 
-    /**
-     * Gets competition-name value from select
-     * 
-     * returns {string | null} - value of input
-     * 
-     */
+
     function getCompetitionName() {
+        /**
+         * Gets competition-name value from select
+         * 
+         * @returns {string | null} - value of input
+         * 
+         */
         const competitionNameSelect = document.getElementById("select-competition")
         const competitionName = competitionNameSelect.value
         const trimmedCompetitionName = competitionName.trim()
@@ -364,16 +395,17 @@
 
     const BASE_URL = 'http://127.0.0.1:5000'
 
-    /**
-     * Sends an HTTP request to specified url with provided options
-     * 
-     * @param {string} endpoint - Endpoint to API
-     * @param {object} options - Settings for request, such as method, headers and body. Defaults to { method: 'GET' }
-     * 
-     * @returns {Promise<Object>} - Promise which resolves into JSON response if successful
-     * 
-     */
+
     async function makeRequest(endpoint, options = { method: 'GET' }) {
+        /**
+         * Sends an HTTP request to specified url with provided options
+         * 
+         * @param {string} endpoint - Endpoint to API
+         * @param {object} options - Settings for request, such as method, headers and body. Defaults to { method: 'GET' }
+         * 
+         * @returns {Promise<Object>} - Promise which resolves into JSON response if successful
+         * 
+         */
         const url = `${BASE_URL}${endpoint}`
 
         try {
@@ -392,12 +424,11 @@
     }
 
 
-    /**
-     * Calls GET API '/getMatches' which returns all matches based on parameters provided
-     * 
-     */
     async function getMatches() {
-
+        /**
+         * Calls GET API '/getMatches' which returns all matches based on parameters provided
+         * 
+         */
         const params = {
             "startDate": startDate,
             "endDate": endDate,
@@ -415,18 +446,18 @@
 
         let data = await makeRequest(`/getMatches?startDate=${params.startDate}&endDate=${params.endDate}&status=${params.status}&venueName=${params.venueName}&teamName=${params.teamName}&competition=${params.competition}&limit=${params.limit}&offset=${params.offset}`,
             options)
-  
+
         setGames(data)
     }
 
 
-    /**
-     * Calls GET API '/getCompetitions' which returns the names of all competitions
-     * Sets options in select element for every competition 
-     *
-     */
-    async function getCompetitions() {
 
+    async function getCompetitions() {
+        /**
+         * Calls GET API '/getCompetitions' which returns the names of all competitions
+         * Sets options in select element for every competition 
+         *
+         */
         const options = {
             method: 'GET'
         }
@@ -437,11 +468,12 @@
 
     }
 
-    /**
-     * Calls POST API '/upload' which returns Object if matches were inserted successfully
-     *
-     */
+
     async function uploadFile(file) {
+        /**
+         * Calls POST API '/upload' which returns Object if matches were inserted successfully
+         *
+         */
         const options = {
             method: 'POST',
             body: file

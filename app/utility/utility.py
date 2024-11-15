@@ -1,6 +1,6 @@
 from datetime import datetime, timezone
 
-def dateToUnix(date):
+def dateToUnix(date: str):
     """
     Converts input to timestamp
     
@@ -11,7 +11,14 @@ def dateToUnix(date):
     formattedDate = datetime.strptime(date, "%Y-%m-%d %H:%M:%S").replace(tzinfo=timezone.utc)
     return int(formattedDate.timestamp())
 
-def getFormattedParams(data):
+def getFormattedParams(data: dict):
+    """
+    Formats parameters for 'getMatches'
+    
+    @param {Object} data - Dict with all parameters
+    
+    @returns {Object} params - Dict with formatted parameters 
+    """
     
     # Set "" values to None
     for key, value in data.items():

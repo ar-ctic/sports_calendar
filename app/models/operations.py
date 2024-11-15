@@ -2,6 +2,13 @@
 
 
 def addSport(cursor: object, data: dict):
+    """
+    Inserts team into teams
+
+    @param {Object} cursor - object to execute queries
+    @param {Object} data - data with sports details
+
+    """
 
     query: str = """
     INSERT OR IGNORE INTO sports (sport_name)
@@ -11,7 +18,14 @@ def addSport(cursor: object, data: dict):
 
 
 def addCompetition(cursor: object, data: dict):
+    """
+    Inserts team into teams
 
+    @param {Object} cursor - object to execute queries
+    @param {Object} data - data with competition details
+
+    """
+    
     query: str = """
     INSERT OR IGNORE INTO competitions (competition_id, competition_name)
     VALUES (?, ?)
@@ -26,6 +40,13 @@ def addCompetition(cursor: object, data: dict):
 
 
 def addStage(cursor: object, data: dict):
+    """
+    Inserts team into teams
+
+    @param {Object} cursor - object to execute queries
+    @param {Object} data - data with stage details
+
+    """
 
     query: str = """
     INSERT OR IGNORE INTO stages (stage_id, stage_name, stage_ordering)
@@ -42,6 +63,14 @@ def addStage(cursor: object, data: dict):
 
 
 def addTeam(cursor: object, data: dict, foreignIds: dict):
+    """
+    Inserts team into teams
+
+    @param {Object} cursor - object to execute queries
+    @param {Object} data - data with team details
+    @param {Object} foreignIds - primary keys of stages and sports
+
+    """
 
     query: str = """
     INSERT OR IGNORE INTO teams (name, official_name, slug, abbreviation, team_country_code, _stage_id, _sport_id)
@@ -66,6 +95,13 @@ def addTeam(cursor: object, data: dict, foreignIds: dict):
 
 
 def addMatch(cursor: object, data: dict):
+    """
+    Inserts match into matches
+
+    @param {Object} cursor - object to execute queries
+    @param {Object} data - data with match details
+
+    """
 
     query: str = """
     INSERT OR IGNORE INTO matches (season, status, stadium, time_venue_utc, date_venue, _home_team_id, _away_team_id, _stage_id, _sport_id, _competition_id)
@@ -91,8 +127,15 @@ def addMatch(cursor: object, data: dict):
     return matchId
 
 
-def addMatchResults(cursor: object, data: dict, matchId):
+def addMatchResults(cursor: object, data: dict, matchId: int):
+    """
+    Inserts match results
 
+    @param {Object} cursor - object to execute queries
+    @param {Object} data - data with match results
+    @param {int} matchId - primary key of match
+
+    """
     query: str = """
     INSERT OR IGNORE INTO match_results (home_goals, away_goals, message, _winner_team_id, _match_id)
     VALUES (?, ?, ?, ?, ?)
@@ -231,7 +274,11 @@ def checkMatchExists(cursor: object, home_team_id, away_team_id, timeVenue, date
 
 
 def printAllMatches(connection):
-
+    """
+    prints all matches from table matches
+    
+    @param {Object} connection - connection to database
+    """
     cursor = connection.cursor()
     query = """
     SELECT * FROM matches
@@ -245,7 +292,13 @@ def printAllMatches(connection):
 
 
 def getCompetitionNames(connection: object):
+    """
+    Returns all competition names from competitions
 
+    @param {Object} connection - connection to database
+
+    @returns {Object} - returns List of all competition names
+    """
     cursor: object = connection.cursor()
 
     query: str = """
@@ -262,7 +315,14 @@ def getCompetitionNames(connection: object):
 
 
 def getMatchesWithParameter(connection: object, data):
+    """
+    Returns all specified matches
 
+    @param {Object} connection - connection to database
+    @param {Object} data - dict with all parameters
+    
+    @returns {Object} - returns List of all specified matches
+    """
     cursor = connection.cursor()
 
     query: str = """

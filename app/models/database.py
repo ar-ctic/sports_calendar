@@ -6,7 +6,7 @@ from typing import Dict, List
 from models.operations import *
 from utility.utility import dateToUnix
 
-def addSportIfNeeded(cursor, gameData):
+def addSportIfNeeded(cursor: object, gameData: dict):
     """
     Add sport if not None and not already exists
 
@@ -17,7 +17,7 @@ def addSportIfNeeded(cursor, gameData):
         addSport(cursor, gameData["sport"])
 
 
-def addCompetitionIfNeeded(cursor, gameData):
+def addCompetitionIfNeeded(cursor: object, gameData: dict):
     """
     Add competition if it not exists and returns it
 
@@ -34,7 +34,7 @@ def addCompetitionIfNeeded(cursor, gameData):
     return competition
 
 
-def addStageIfNeeded(cursor, gameData):
+def addStageIfNeeded(cursor: object, gameData: dict):
     """
     Add new stage if not None and not already exists
 
@@ -45,7 +45,7 @@ def addStageIfNeeded(cursor, gameData):
         addStage(cursor, gameData["stage"])
 
 
-def getStageSportId(cursor, gameData):
+def getStageSportId(cursor: object, gameData: dict):
     """
     Get dict with stage and sport ids
 
@@ -62,7 +62,7 @@ def getStageSportId(cursor, gameData):
     return stageSportId
 
 
-def getOrAddTeam(cursor, teamData, stageSportId):
+def getOrAddTeam(cursor: object, teamData: dict, stageSportId: dict):
     """
     Gets teamId if team exists else create new team and get its id
 
@@ -80,7 +80,7 @@ def getOrAddTeam(cursor, teamData, stageSportId):
 
 
 
-def addMatchData(cursor, gameData, competition):
+def addMatchData(cursor: object, gameData: dict, competition: dict):
     """
     Configures match data
 
@@ -125,7 +125,7 @@ def addMatchData(cursor, gameData, competition):
     return matchData
 
 
-def addResultsIfNeeded(cursor, gameData, matchId):
+def addResultsIfNeeded(cursor: object, gameData: dict, matchId: int):
     """
     Add Match results if not None
 
@@ -180,6 +180,8 @@ def addAllBasedOnOneEvent(connection: object, gameData: dict):
 def createAllTables(connection: object):
     """
     Creates all tables if not already exists based on ERD
+    
+    @param {Object} connection - connection to database
     """
 
     cursor: object = connection.cursor()
@@ -266,7 +268,7 @@ def createAllTables(connection: object):
     return
 
 
-def initDatabase(database_path):
+def initDatabase(database_path: str):
     """
     Initialize database
     Creates all tables if not already exists and commits them
