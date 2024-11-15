@@ -1,10 +1,10 @@
 import sqlite3
 import os
 from typing import Dict, List
-from datetime import datetime, timezone
+
 
 from models.operations import *
-
+from utility.utility import dateToUnix
 
 def addSportIfNeeded(cursor, gameData):
     """
@@ -78,17 +78,6 @@ def getOrAddTeam(cursor, teamData, stageSportId):
         teamId = addTeam(cursor, teamData, stageSportId)
     return teamId
 
-
-def dateToUnix(date):
-    """
-    Converts input to timestamp
-    
-    @param {string} date - Date + Time in Format "YYYY-MM-DD HH:MM:SS"
-    
-    @returns {int} - unix timestamp of date
-    """
-    formattedDate = datetime.strptime(date, "%Y-%m-%d %H:%M:%S").replace(tzinfo=timezone.utc)
-    return int(formattedDate.timestamp())
 
 
 def addMatchData(cursor, gameData, competition):
@@ -186,41 +175,6 @@ def addAllBasedOnOneEvent(connection: object, gameData: dict):
 
     finally:
         connection.commit()
-
-
-def getMatchesWithParameter(connection: object, data):
-    
-    
-    startDate_unix = None
-    endDate_unix = None
-    
-    if data['startDate']: startDate_unix = dateToUnix(f'{data['startDate']} 00:00:00') 
-    if data['endDate']: endDate_unix = dateToUnix(f'{data['endDate']} 00:00:00')
-    
-    status = [*data['status'], None, None, None][:3]
-    
-    venueName = data["venueName"]
-    teamName = data["teamName"]
-    if venueName: venueName = f"%{data["venueName"]}%"
-    if teamName: teamName = f"%{data["teamName"]}%"
-    
-    params = {
-        'startDate': startDate_unix,
-        'endDate': endDate_unix,
-        'statusScheduled': status[0],
-        'statusOngoing': status[1],
-        'statusPlayed': status[2],
-        'venueName': venueName,
-        'teamName': teamName,
-        'competition': data['competition']
-    }
-
-    cursor = connection.cursor()
-    matches = getMatches(cursor, params)
-    
-    return matches
-
-
 
 
 def createAllTables(connection: object):

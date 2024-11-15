@@ -5,6 +5,8 @@ import yaml
 
 
 from models.database import initDatabase, addAllBasedOnOneEvent, getCompetitionNames, getMatchesWithParameter
+from utility.utility import getFormattedParams
+
 
 database_path: str = ""
 
@@ -40,13 +42,22 @@ def index():
     return render_template("index.html")
 
 
-@app.route("/getMatches", methods=["POST"])
+@app.route("/getMatches", methods=["GET"])
 def matches():
     
-    data = request.get_json()
+    data = {
+        'startDate': request.args.get('startDate', None),
+        'endDate': request.args.get('endDate', None),
+        'status': request.args.get('status', []),
+        'venueName': request.args.get('venueName', None),
+        'teamName': request.args.get('teamName', None),
+        'competition': request.args.get('competition', None),
+    }
     
     connection = getDatabaseConnection()
-    return jsonify(getMatchesWithParameter(connection, data))
+    params = getFormattedParams(data)
+    matches = getMatchesWithParameter(connection, params)
+    return jsonify(matches)
 
 
 @app.route("/upload", methods=["POST"])

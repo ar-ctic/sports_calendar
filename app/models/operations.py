@@ -261,7 +261,9 @@ def getCompetitionNames(connection: object):
     return []
 
 
-def getMatches(cursor: object, data):
+def getMatchesWithParameter(connection: object, data):
+
+    cursor = connection.cursor()
 
     query: str = """
     SELECT 
@@ -288,6 +290,7 @@ def getMatches(cursor: object, data):
     (m.stadium LIKE ? OR ? IS NULL) AND
     (ht.official_name LIKE ? OR at.official_name LIKE ? OR ? IS NULL) AND
     (comp.competition_name = ? OR ? IS NULL)
+    ORDER BY m.time_venue_utc ASC;
     """
 
     cursor.execute(

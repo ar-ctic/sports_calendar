@@ -11,7 +11,6 @@
 
 <body>
 
-
     <header class="header border-bottom-1px">
         <a href="#" class="logo">Logo</a>
 
@@ -21,6 +20,7 @@
             <a href="#">About Us</a>
             <a href="#">Contact Us</a>
         </nav>
+
     </header>
 
     <div class="selection-container">
@@ -41,9 +41,10 @@
                     <div class="status center">
                         <div class="">Status</div>
                         <div class="status-checkbox">
-                            <label><input id="scheduled-checkbox" type="checkbox" value="scheduled">Scheduled</label>
-                            <label><input id="ongoing-checkbox" type="checkbox" value="ongoing">Ongoing</label>
-                            <label><input id="played-checkbox" type="checkbox" value="played">Played</label>
+                            <label><input id="scheduled-checkbox" type="checkbox" value="scheduled"
+                                    checked>Scheduled</label>
+                            <label><input id="ongoing-checkbox" type="checkbox" value="ongoing" checked>Ongoing</label>
+                            <label><input id="played-checkbox" type="checkbox" value="played" checked>Played</label>
                         </div>
                     </div>
 
@@ -59,55 +60,75 @@
                                 <option value="">-</option>
                             </select>Competition</label>
                     </div>
-
                 </div>
-
-
-
             </div>
 
             <div class="find-container center">
                 <button class="find-button border-small" onclick="getMatches()">Find Games</button>
             </div>
 
-
-
         </div>
-
     </div>
 
-    <footer class="footer border-top-1px"></footer>
-
     <input type="file" name="file" id="file-input" accept=".json">
+
+    <div class="games-container">
+        <div class="games-info game-container">
+            <div class="game-section">
+                <p class="game-detail">Season</p>
+                <p class="game-detail">Date</p>
+            </div>
+            <div class="game-section">
+                <p class="game-detail">Competition</p>
+                <p class="game-detail">Status</p>
+                <p class="game-detail">Stadium</p>
+            </div>
+            <div class="game-section">
+                <p class="game-detail">Home-Team</p>
+                <p class="game-detail">Away-Team</p>
+
+            </div>
+            <div class="game-section">
+                <p class="game-detail">Result</p>
+            </div>
+
+        </div>
+        <div id="games" class="games">
+
+        </div>
+    </div>
 </body>
 
 <script>
 
+
     const fileInput = document.getElementById("file-input")
     fileInput.addEventListener("change", async function () {
+
         const file = fileInput.files[0]
 
-        const formData = new FormData();
-        formData.append("file", file);
-
-        const options = {
-            method: 'POST',
-            body: formData
-        };
+        const formData = new FormData()
+        formData.append("file", file)
 
         if (file && file.type === "application/json") {
-            x = await makeRequest('/upload', options)
-            console.log(x)
+            uploadFile(formData)
         }
     })
 
+    /**
+     * Formats the date to format: "YYYY-mm-dd"
+     * 
+     * @param {Object} date - object that contains data about selected date
+     * 
+     * @returns {string} - formatted date
+     */
     function dateFormatter(date) {
         let formattedDate = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${(date.getDate()).toString().padStart(2, '0')}`
         return formattedDate
     }
 
-    let startDate = "";
-    let endDate = "";
+    let startDate = ""
+    let endDate = ""
     document.addEventListener('DOMContentLoaded', function () {
 
         const display_date = document.getElementById("date-display-text")
@@ -115,20 +136,23 @@
 
 
 
-        flatpickr("#daterange", {
+        const datePicker = flatpickr("#daterange", {
             mode: "range",
             inline: true,
 
             onChange: function (selectedDates) {
-                startDate = dateFormatter(selectedDates[0])
 
-                endDate = undefined
+                if (!selectedDates[0]) return
+
+                let startDate = dateFormatter(selectedDates[0])
+
+                let endDate = ""
                 if (selectedDates[1]) {
                     endDate = dateFormatter(selectedDates[1])
 
                 }
 
-                display_date.textContent = endDate ? `${startDate} to ${endDate}` : `${startDate}`;
+                display_date.textContent = endDate ? `${startDate} to ${endDate}` : `${startDate}`
 
             },
 
@@ -137,13 +161,16 @@
                 endDate = dateFormatter(selectedDates[1])
 
             }
-        });
-
-        button_clear_date.addEventListener('click', function () {
-            display_date.textContent = "";
         })
 
-    });
+        button_clear_date.addEventListener('click', function () {
+            display_date.textContent = ""
+            datePicker.clear()
+            startDate = ""
+            endDate = ""
+        })
+
+    })
 
 
 </script>
@@ -159,7 +186,7 @@
     function setCompetitionSelect(data) {
         const competitionSelect = document.getElementById("select-competition")
 
-        for (const item of data) {
+        data.forEach(item => {
             const option = document.createElement('option')
 
             option.value = item
@@ -167,10 +194,65 @@
 
             competitionSelect.appendChild(option)
 
-        }
+        })
     }
 
+    function setGames(data) {
 
+        const gamesContainer = document.getElementById('games')
+        gamesContainer.innerHTML = ""
+
+        function createDetailElement(textContent) {
+            const detailElement = document.createElement('p')
+            detailElement.className = "game-detail"
+            detailElement.textContent = textContent === null ? "---" : textContent
+            return detailElement
+        }
+
+        function getGameDetailSections(game) {
+            const date = new Date(game[3] * 1000).toLocaleString('en-GB', { timeZone: 'UTC' })
+
+            // Reorder list: [Season, Date, Time, Competition, Status, Stadium, HomeTeam, AwayTeam, Result]
+            const gameDetails = [game[0], date, game[8], game[1], game[2], game[5], game[6], game[9], game[10]]
+
+            // Define slices for each section
+            const sections = [
+                gameDetails.slice(0, 2),
+                gameDetails.slice(2, 5),
+                gameDetails.slice(5, 7),
+                gameDetails.slice(7, 9)
+            ]
+
+            return sections
+        }
+
+        data.forEach(game => {
+            const gameElement = document.createElement('div')
+            gameElement.className = "game-container"
+
+
+            const sections = getGameDetailSections(game)
+
+            // Create a div for each section and add the corresponding details
+            sections.forEach(section => {
+                const sectionElement = document.createElement('div')
+                sectionElement.className = "game-section"
+                section.forEach(detail => sectionElement.appendChild(createDetailElement(detail)))
+                gameElement.appendChild(sectionElement)
+            })
+
+            // Add the structured game element to the games container
+            gamesContainer.appendChild(gameElement)
+        })
+
+    }
+
+    /**
+     * Gets value from status checkboxes
+     * 
+     * @returns {Object} - values of checkboxes
+     * 
+     */
     function getCheckboxStatus() {
 
         const scheduledCheckbox = document.getElementById("scheduled-checkbox")
@@ -180,50 +262,58 @@
         const selectedValues = []
 
         if (scheduledCheckbox.checked) {
-            selectedValues.push(scheduledCheckbox.value);
+            selectedValues.push(scheduledCheckbox.value)
         }
         if (ongoingCheckbox.checked) {
-            selectedValues.push(ongoingCheckbox.value);
+            selectedValues.push(ongoingCheckbox.value)
         }
         if (playedCheckbox.checked) {
-            selectedValues.push(playedCheckbox.value);
+            selectedValues.push(playedCheckbox.value)
         }
 
         return selectedValues
 
     }
 
+    /**
+     * Gets venue-name value from input
+     * 
+     * returns {string | null} - value of input 
+     * 
+     */
     function getVenueName() {
         const venueNameInput = document.getElementById("venue-name")
         const venueName = venueNameInput.value
         const trimmedVenueName = venueName.trim()
 
-        if(trimmedVenueName === ""){
-            return null
-        }
         return trimmedVenueName
     }
 
+    /**
+     * Gets team-name value from input
+     * 
+     * returns {string | null} - value of input 
+     * 
+     */
     function getTeamName() {
         const teamNameInput = document.getElementById("team-name")
         const teamName = teamNameInput.value
         const trimmedTeamName = teamName.trim()
 
-        if(trimmedTeamName === ""){
-            return null
-        }
-
         return trimmedTeamName
     }
 
+    /**
+     * Gets competition-name value from select
+     * 
+     * returns {string | null} - value of input
+     * 
+     */
     function getCompetitionName() {
         const competitionNameSelect = document.getElementById("select-competition")
         const competitionName = competitionNameSelect.value
         const trimmedCompetitionName = competitionName.trim()
 
-        if(trimmedCompetitionName === ""){
-            return null
-        }
         return trimmedCompetitionName
     }
 
@@ -262,9 +352,13 @@
     }
 
 
+    /**
+     * Calls GET API '/getMatches' which returns all matches based on parameters provided
+     * 
+     */
     async function getMatches() {
 
-        const config = {
+        const params = {
             "startDate": startDate,
             "endDate": endDate,
             "status": getCheckboxStatus(),
@@ -274,35 +368,47 @@
         }
 
         const options = {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json" // Specify content type
-            },
-            body: JSON.stringify(config)
+            method: "GET"
         }
 
-        let data = await makeRequest('/getMatches', options)
-        console.log(data)
+        let data = await makeRequest(`/getMatches?startDate=${params.startDate}&endDate=${params.endDate}&status=${params.status}&venueName=${params.venueName}&teamName=${params.teamName}&competition=${params.competition}`,
+            options)
+        setGames(data)
     }
 
 
     /**
-     * Sends HTTP GET request to '/competitions' API
+     * Calls GET API '/getCompetitions' which returns the names of all competitions
      * Sets options in select element for every competition 
-     * 
-     * @returns {Promise<object>} - Object with all available competitions, setting select input options
+     *
      */
     async function getCompetitions() {
 
         const options = {
             method: 'GET'
-        };
+        }
 
         let data = await makeRequest('/getCompetitions', options)
 
         setCompetitionSelect(data)
 
     }
+
+    /**
+     * Calls POST API '/upload' which returns Object if matches were inserted successfully
+     *
+     */
+    async function uploadFile(file) {
+        const options = {
+            method: 'POST',
+            body: file
+        }
+
+        let data = await makeRequest('/upload', options)
+        console.log(data)
+
+    }
+
     getCompetitions()
 </script>
 
