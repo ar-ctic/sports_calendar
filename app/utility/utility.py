@@ -43,7 +43,9 @@ def getFormattedParams(data):
         'statusPlayed': status[2], 
         'venueName': venueName,
         'teamName': teamName,
-        'competition': data['competition']
+        'competition': data['competition'],
+        'limit': data['limit'],
+        'offset': data['offset']
     }
     
     return params

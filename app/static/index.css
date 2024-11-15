@@ -1,6 +1,6 @@
 body {
     height: 150%;
-    background-color:#F0F8FF;
+    background-color: #F0F8FF;
 
 }
 
@@ -19,7 +19,7 @@ header {
 
 .center {
     display: flex;
-    justify-content: center;    
+    justify-content: center;
     align-items: center;
 }
 
@@ -29,13 +29,13 @@ header {
     width: 100%;
     height: 40vh;
     padding-bottom: 3rem;
-    border-bottom: 1px solid rgb(180, 180, 180); 
+    border-bottom: 1px solid rgb(180, 180, 180);
 }
 
 .datepicker-container {
     width: 60%;
     height: 100%;
-    
+
 }
 
 .container {
@@ -48,8 +48,8 @@ header {
 .options-container {
     width: 60%;
     height: 100%;
-    border: 1px solid rgb(180, 180, 180); 
-    
+    border: 1px solid rgb(180, 180, 180);
+
 }
 
 .grid-container {
@@ -57,49 +57,50 @@ header {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     grid-template-rows: 25% auto;
-    
+
 }
 
 .status {
     grid-column: span 2;
     padding: 10px;
     flex-direction: column;
-    border-bottom: 1px solid rgb(180, 180, 180); 
+    border-bottom: 1px solid rgb(180, 180, 180);
 }
 
 .status-checkbox label {
-    margin-right: 40px; 
+    margin-right: 40px;
 }
 
 .status-checkbox {
     padding-top: 10px;
 }
 
-.status-venue input, .status-team input {
-    margin-right: 20px; 
+.status-venue input,
+.status-team input {
+    margin-right: 20px;
     border-radius: 1rem;
     border: 1px solid rgb(180, 180, 180);
 }
 
 .status-competition {
     grid-column: span 2;
-    border-top: 1px solid rgb(180, 180, 180); 
+    border-top: 1px solid rgb(180, 180, 180);
 }
 
-.status-competition select{
+.status-competition select {
     min-width: 200px;
-    margin-right: 20px; 
+    margin-right: 20px;
     border-radius: 1rem;
 }
 
 
 
-.find-container{
+.find-container {
     width: 40%;
     height: 100%;
 }
 
-.find-button{
+.find-button {
     height: 20%;
     width: 30%;
     border-radius: 5px;
@@ -108,15 +109,15 @@ header {
     transition: background-color 0.3s;
 }
 
-.find-button:hover{
+.find-button:hover {
 
     background-color: #dfdfdf;
-} 
+}
 
-.find-button:active{
+.find-button:active {
 
     background-color: #857d7d;
-} 
+}
 
 
 
@@ -126,28 +127,28 @@ header {
     flex-direction: column;
     width: 100%;
     padding-bottom: 1rem;
-    border: 1px solid rgb(180, 180, 180); 
+    border: 1px solid rgb(180, 180, 180);
 }
 
 .games-info {
     width: 100%;
     height: 10vh;
     margin-top: 1rem;
-    border-bottom: 1px solid rgb(180, 180, 180); 
+    border-bottom: 1px solid rgb(180, 180, 180);
 
 }
 
-.games{
+.games {
     display: flex;
     flex-direction: column;
-    width: 100%;    
+    width: 100%;
 }
 
 .game-container {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(6, 1fr);
     grid-template-rows: auto;
-    
+
 }
 
 .game-section {
@@ -155,7 +156,7 @@ header {
     grid-template-columns: repeat(auto-fit, minmax(30px, 2fr));
     background-color: #e6f2fc;
     margin: 0.1rem;
-    border-right: 1px solid rgb(180, 180, 180); 
+    border-right: 1px solid rgb(180, 180, 180);
     border-bottom: 1px solid rgb(180, 180, 180);
 }
 
@@ -168,6 +169,29 @@ header {
 
 }
 
+
+.load-more {
+    display: none;
+    height: 5rem;
+    width: 100%;
+}
+
+.load-more button {
+    width: 10%;
+    height: 2rem;
+    border-radius: 1rem;
+    border: 1px solid rgb(180, 180, 180);
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.load-more button:hover {
+    background-color: #dfdfdf;
+}
+
+.load-more button:active {
+    background-color: #857d7d;
+}
 
 .border-small {
     border: 1px solid rgb(180, 180, 180);
@@ -186,7 +210,7 @@ header {
     margin-top: 1rem;
 }
 
-#date-display-text{
+#date-display-text {
     border-radius: 1rem;
     font-size: 1rem;
     margin-left: 1rem;
@@ -196,7 +220,7 @@ header {
 
 }
 
-#date-display-clear{
+#date-display-clear {
     height: 1.5rem;
     width: 1.5rem;
     margin-left: 1rem;
@@ -206,12 +230,12 @@ header {
     transition: background-color 0.3s;
 }
 
-#date-display-clear:hover{
+#date-display-clear:hover {
 
     background-color: #dfdfdf;
-} 
+}
 
-#date-display-clear:active{
+#date-display-clear:active {
 
     background-color: #857d7d;
-} 
+}

@@ -64,7 +64,7 @@
             </div>
 
             <div class="find-container center">
-                <button class="find-button border-small" onclick="getMatches()">Find Games</button>
+                <button class="find-button border-small" onclick="findMatches()">Find Games</button>
             </div>
 
         </div>
@@ -74,33 +74,51 @@
 
     <div class="games-container">
         <div class="games-info game-container">
+
             <div class="game-section">
                 <p class="game-detail">Season</p>
                 <p class="game-detail">Date</p>
             </div>
+
             <div class="game-section">
                 <p class="game-detail">Competition</p>
+                <p class="game-detail">Stage</p>
+                
+            </div>
+
+            <div class="game-section">
                 <p class="game-detail">Status</p>
                 <p class="game-detail">Stadium</p>
             </div>
+
             <div class="game-section">
                 <p class="game-detail">Home-Team</p>
                 <p class="game-detail">Away-Team</p>
 
             </div>
+
             <div class="game-section">
                 <p class="game-detail">Result</p>
             </div>
 
         </div>
+
         <div id="games" class="games">
 
         </div>
+
+        <div id="load-more" class="load-more center">
+            <button onclick="loadMore()">Load More</button>
+        </div>
+
     </div>
 </body>
 
 <script>
-
+    let startDate = ""
+    let endDate = ""
+    const limit = 10
+    let offset = 0
 
     const fileInput = document.getElementById("file-input")
     fileInput.addEventListener("change", async function () {
@@ -127,8 +145,7 @@
         return formattedDate
     }
 
-    let startDate = ""
-    let endDate = ""
+
     document.addEventListener('DOMContentLoaded', function () {
 
         const display_date = document.getElementById("date-display-text")
@@ -177,6 +194,21 @@
 
 
 <script>
+
+
+
+    function findMatches() {
+        offset = 0
+        const gamesContainer = document.getElementById('games')
+        gamesContainer.innerHTML = ""
+        getMatches()
+    }
+
+    function loadMore() {
+        offset += limit
+        getMatches()
+    }
+
     /**
      * Sets option in select input for each competition in data
      * 
@@ -200,7 +232,7 @@
     function setGames(data) {
 
         const gamesContainer = document.getElementById('games')
-        gamesContainer.innerHTML = ""
+        const loadMoreContainer = document.getElementById('load-more')
 
         function createDetailElement(textContent) {
             const detailElement = document.createElement('p')
@@ -212,15 +244,16 @@
         function getGameDetailSections(game) {
             const date = new Date(game[3] * 1000).toLocaleString('en-GB', { timeZone: 'UTC' })
 
-            // Reorder list: [Season, Date, Time, Competition, Status, Stadium, HomeTeam, AwayTeam, Result]
-            const gameDetails = [game[0], date, game[8], game[1], game[2], game[5], game[6], game[9], game[10]]
+            // Reorder list: [Season, Date, Time, Competition, Stage, Status, Stadium, HomeTeam, AwayTeam, Goals-HomeTeam, Goals-AwayTeam]
+            const gameDetails = [game[0], date, game[8], game[9], game[1], game[2], game[5], game[6], game[10], game[11]]
 
             // Define slices for each section
             const sections = [
                 gameDetails.slice(0, 2),
-                gameDetails.slice(2, 5),
-                gameDetails.slice(5, 7),
-                gameDetails.slice(7, 9)
+                gameDetails.slice(2, 4),
+                gameDetails.slice(4, 6),
+                gameDetails.slice(6, 8),
+                gameDetails.slice(8, 10)
             ]
 
             return sections
@@ -244,6 +277,13 @@
             // Add the structured game element to the games container
             gamesContainer.appendChild(gameElement)
         })
+
+
+        if (gamesContainer.innerHTML !== "") {
+            loadMoreContainer.style.display = "flex"
+        } else {
+            loadMoreContainer.style.display = "none"
+        }
 
     }
 
@@ -364,15 +404,18 @@
             "status": getCheckboxStatus(),
             "venueName": getVenueName(),
             "teamName": getTeamName(),
-            "competition": getCompetitionName()
+            "competition": getCompetitionName(),
+            "limit": limit,
+            "offset": offset
         }
 
         const options = {
             method: "GET"
         }
 
-        let data = await makeRequest(`/getMatches?startDate=${params.startDate}&endDate=${params.endDate}&status=${params.status}&venueName=${params.venueName}&teamName=${params.teamName}&competition=${params.competition}`,
+        let data = await makeRequest(`/getMatches?startDate=${params.startDate}&endDate=${params.endDate}&status=${params.status}&venueName=${params.venueName}&teamName=${params.teamName}&competition=${params.competition}&limit=${params.limit}&offset=${params.offset}`,
             options)
+  
         setGames(data)
     }
 

@@ -276,6 +276,7 @@ def getMatchesWithParameter(connection: object, data):
     at.official_name,
     sport.sport_name,
     comp.competition_name,
+    stages.stage_name,
     mr.home_goals,
     mr.away_goals
     FROM matches m
@@ -283,6 +284,7 @@ def getMatchesWithParameter(connection: object, data):
     LEFT JOIN teams at ON m._away_team_id = at.team_id
     LEFT JOIN sports sport ON m._sport_id = sport.sport_id
     LEFT JOIN competitions comp ON m._competition_id = comp.competition_id
+    LEFT JOIN stages stages ON m._stage_id = stages.stage_id
     LEFT JOIN match_results mr ON m.match_id = mr._match_id
     WHERE
     (m.date_venue BETWEEN ? AND ? OR ? IS NULL OR ? IS NULL) AND
@@ -290,7 +292,8 @@ def getMatchesWithParameter(connection: object, data):
     (m.stadium LIKE ? OR ? IS NULL) AND
     (ht.official_name LIKE ? OR at.official_name LIKE ? OR ? IS NULL) AND
     (comp.competition_name = ? OR ? IS NULL)
-    ORDER BY m.time_venue_utc ASC;
+    ORDER BY m.time_venue_utc ASC
+    LIMIT ? OFFSET ?;
     """
 
     cursor.execute(
@@ -310,10 +313,12 @@ def getMatchesWithParameter(connection: object, data):
             data["teamName"],
             data["competition"],
             data["competition"],
+            data["limit"],
+            data["offset"]
         )
     )
     matches = cursor.fetchall()
-    print(matches)
+
     return matches
 
 

@@ -52,6 +52,8 @@ def matches():
         'venueName': request.args.get('venueName', None),
         'teamName': request.args.get('teamName', None),
         'competition': request.args.get('competition', None),
+        'limit': int(request.args.get('limit', 1)),
+        'offset': int(request.args.get('offset', 0))
     }
     
     connection = getDatabaseConnection()
