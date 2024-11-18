@@ -33,7 +33,7 @@ A Flask-based web application for tracking and managing sports matches, competit
 ```
 
 # Database Schema
-![](/images/sports_calendar_erd.PNG, "Database ERD")
+![ERD](https://github.com/ar-ctic/sports_calendar/blob/main/images/sports_calendar_erd.PNG?raw=true, "Database ERD")
 
 # Setup and Installation
 1. Clone the repository
