@@ -14,6 +14,7 @@ def addSportIfNeeded(cursor: object, gameData: dict):
     @param {dict} gameData - Data of game
     """
     if "sport" in gameData:
+        print("CREATE NEW SPORT")
         addSport(cursor, gameData["sport"])
 
 
@@ -30,7 +31,12 @@ def addCompetitionIfNeeded(cursor: object, gameData: dict):
         "competitionId": gameData["originCompetitionId"],
         "competitionName": gameData["originCompetitionName"],
     }
-    addCompetition(cursor, competition)
+    
+    competitionId = getCompetitionId(cursor, competition["competitionName"])
+    
+    if not competitionId:
+        competitionId = addCompetition(cursor, competition)
+        
     return competition
 
 
@@ -41,6 +47,11 @@ def addStageIfNeeded(cursor: object, gameData: dict):
     @param {Object} cursor - object to execute queries
     @param {dict} gameData - Data of game
     """
+    
+    stageId = getStageId(cursor, gameData["stage"]["name"])
+    
+    if stageId: return
+    
     if "stage" in gameData:
         addStage(cursor, gameData["stage"])
 
@@ -80,7 +91,7 @@ def getOrAddTeam(cursor: object, teamData: dict, stageSportId: dict):
 
 
 
-def addMatchData(cursor: object, gameData: dict, competition: dict):
+def getMatchData(cursor: object, gameData: dict, competition: dict):
     """
     Configures match data
 
@@ -155,7 +166,7 @@ def addAllBasedOnOneEvent(connection: object, gameData: dict):
         competition = addCompetitionIfNeeded(cursor, gameData)
         addStageIfNeeded(cursor, gameData)
 
-        matchData = addMatchData(cursor, gameData, competition)
+        matchData = getMatchData(cursor, gameData, competition)
         
         matchExists = checkMatchExists(cursor, matchData["homeTeamId"], matchData["awayTeamId"], matchData["timeVenueUTC"], matchData["dateVenue"])
         

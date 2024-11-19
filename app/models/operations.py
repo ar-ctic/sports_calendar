@@ -188,7 +188,7 @@ def getCompetitionId(cursor: object, competition_name: str):
     @returns {int, None} - returns competition id if found else None
     """
     query: str = """
-    SELECT stage_id FROM stages WHERE competition_name = ?
+    SELECT competition_id FROM competitions WHERE competition_name = ?
     """
     cursor.execute(query, (competition_name,))
 
