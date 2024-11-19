@@ -22,14 +22,17 @@ A Flask-based web application for tracking and managing sports matches, competit
 ├── config/
 │   └── config.yaml         # Database configuration
 ├── models/
-│   ├── database.py        # Database initialization and core operations
-│   └── operations.py      # Database CRUD operations
+│   ├── database.py         # Database initialization and core operations
+│   └── operations.py       # Database CRUD operations
 ├── utility/
-│   └── utility.py         # Helper functions
+│   └── utility.py          # Helper functions
 ├── views/
-│   └── index.html         # Main frontend template
-├── static/                # Static assets directory
-└── server.py             # Main Flask application
+│   └── index.html          # Main frontend template
+├── static/     
+│   ├── index.css           # Main frontend css
+│   └── index.js            # Main Fronted JS
+│           
+└── server.py               # Main Flask application
 ```
 
 # Database Schema
