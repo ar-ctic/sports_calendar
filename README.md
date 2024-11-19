@@ -59,7 +59,7 @@ Match data should be uploaded in the following format:
 {
   "data": [
     {
-      "sport": {},
+      "sport": "",
       "originCompetitionId": "",
       "originCompetitionName": "",
       "stage": {
@@ -72,10 +72,36 @@ Match data should be uploaded in the following format:
       "dateVenue": "",
       "timeVenueUTC": "",
       "stadium": "",
-      "homeTeam": {},
-      "awayTeam": {},
-      "result": {}
+      "homeTeam": {
+            "name": "",
+            "officialName": "",
+            "slug": "",
+            "abbreviation": "",
+            "teamCountryCode": ""
+      },
+      "awayTeam": {
+            "name": "",
+            "officialName": "",
+            "slug": "",
+            "abbreviation": "",
+            "teamCountryCode": ""
+      },
+      "result": {
+            "homeGoals": 0,
+            "awayGoals": 0,
+            "winner": "",
+            "message": "",
+      }
     }
   ]
 }
 ```
+
+## Generating Data
+To generate random sportdata execute:
+```bash
+python sportdata_generator.py [INT]AMOUNT
+```
+
+## Thoughts
+For this challenge, I opted for a relational database design, which involves creating separate tables for entities like teams, competitions, stages etc. This structure ensures consistency, reduces redundancy, and establishes clear relationships between events and their associated details. By normalizing the data, I can maintain uniformity, such as consistent team names or venue information across all records. While this approach adds some complexity to queries and data entry, it provides a strong foundation for scalability and maintainability.
