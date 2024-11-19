@@ -1,7 +1,7 @@
 import random
 from datetime import datetime, timedelta
-from pprint import pprint
 import json
+import sys
 
 football_teams = [
     ["Al Shabab", "Al Shabab FC", "al-shabab-fc", "SHA", "KSA"],
@@ -175,12 +175,17 @@ def create_match():
 
     return match
 
-def main():
-    matches = [create_match() for _ in range(1000)]
+def main(amount):
+    matches = [create_match() for _ in range(amount)]
     data = {"data": matches}
     
     with open('matches.json', 'w') as json_file:
         json.dump(data, json_file, indent=4)
 
 if __name__ == "__main__":
-    main()
+    
+    if len(sys.argv) == 2:
+        amount =  int(sys.argv[1])
+    else:
+        exit("Specify amount of matches to be created:\n-python sportdata_generator.py [INT]AMOUNT")
+    main(amount)
